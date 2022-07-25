@@ -1,7 +1,6 @@
 //=================RESOURCES================//
 //https://www.geeksforgeeks.org/node-js-yargs-module/
 //https://yargs.js.org/docs/
-
 //=========================npm modules========================//
 //==========Chalk===========//
 const chalk = require("chalk");
@@ -10,23 +9,9 @@ const chalk = require("chalk");
 const yargs = require("yargs/yargs")(process.argv.slice(2));
 const argv = yargs.argv;
 //=========================my modules========================//
-const { getNotes, addNote , removeNote } = require("./notes.js");
+const { addNote, removeNote, listNotes, readNote } = require("./notes.js");
 /*********************************************************/
 /*********************************************************/
-/*
-const command = process.argv[2];
-if (command === "add") {
-    console.log(chalk.green.inverse.bold("Adding Note!"));
-} else if (command === "remove") {
-    console.log(chalk.red.inverse.bold("Removing Note!"));
-}
-*/
-
-/*
-console.log(process.argv);
-console.log(yargs.argv)
-*/
-
 //=============Customize yargs version=============//
 yargs.version("1.1.0");
 //yargs.showVersion('log');
@@ -72,16 +57,23 @@ yargs.command({
 yargs.command({
     command: "list",
     describe: "listing all the notes",
-    handler(argv) {
-        console.log("Listing all notes");
+    handler() {
+        listNotes();
     },
 });
 //=============Create read command=============//
 yargs.command({
     command: "read",
     describe: "Reading a note",
-    handler() {
-        console.log("Reading a note");
+    builder: {
+        title: {
+            describe: "Note title",
+            demandOption: true,
+            type: "string",
+        },
+    },
+    handler(argv) {
+        readNote(argv.title);
     },
 });
 //=============Parsing commands=============//

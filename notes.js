@@ -1,13 +1,13 @@
 const fs = require("fs");
-const chalk = require('chalk');
+const chalk = require("chalk");
 const getNotes = (note) => {
     return `Your notes is ${note}`;
 };
 
 const addNote = (title, body) => {
     const notes = loadNotes(); // array of javascript objects
-    const duplicateNotes = notes.filter((note) => note.title === title);
-    if (duplicateNotes.length === 0) {
+    const duplicateNote = notes.find((note) => note.title === title);
+    if (!duplicateNote) { // (duplicateNote === undefined)
         const js = { title, body }; //javascript object
         notes.push(js); //javascript array
         saveNotes(notes);
@@ -26,6 +26,27 @@ const removeNote = (title) => {
         console.log(chalk.red.inverse.bold("No Note found with this title"));
     }
 };
+const listNotes = () => {
+    const notes = loadNotes();
+    console.log(chalk.green.inverse.bold("Your Notes are :"));
+    for (let note of notes) {
+        console.log(note.title);
+    } //notes.forEach(note => console.log(note.title));
+};
+const readNote = (title) => {
+    const notes = loadNotes();
+    const matchedNote = notes.find((note) => note.title === title);
+    if (matchedNote) {
+        console.log(
+            chalk.green.inverse.bold(`Note ( ${matchedNote.title} ) : `)+
+            matchedNote.body + '.'
+        );
+    } else {
+        console.log(
+            chalk.red.inverse.bold(`No notes found with title ( ${title} ).`)
+        );
+    }
+};
 const saveNotes = (notes) => {
     const json = JSON.stringify(notes); // javascript object or array => json
     fs.writeFileSync("notes.json", json);
@@ -39,10 +60,12 @@ const loadNotes = () => {
         return [];
     }
 };
+
 /***********************************************/
 module.exports = {
-    getNotes: getNotes,
     addNote: addNote,
     removeNote: removeNote,
+    listNotes: listNotes,
+    readNote: readNote,
 };
 /***********************************************/
